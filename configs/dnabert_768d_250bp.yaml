@@ -1,25 +1,42 @@
-seed_everything: true
-trainer:
+model:
+  class_path: dnabert.models.DnaBertForPretraining
+  config:
+    base:
+      max_length: 250
+      kmer: 3
+      kmer_stride: 1
+      normalize_sequences: true
+      embed_dim: 768
+      num_heads: 12
+      num_layers: 6
+      feedforward_dim: 2048
+      activation: gelu
+    min_mask_ratio: 0.15
+    max_mask_ratio: 0.15
+datamodule:
+  class_path: dnabert.datamodules.DnaBertPretrainingDataModule
+  config:
+    tokenizer: ${model.base.tokenizer}
+    train_sequences_path: /home/data2/deepdna/datasets/silva_nr99_filtered_515f_806r/sequences.fasta.db
+    test_sequences_path: null
+    val_split: 0.0
+    min_length: 65
+    max_length: 250
+    reverse_complement: true
+    batch_size: 128
+    num_workers: 0
+train:
   accelerator: auto
   strategy: auto
   devices: auto
   num_nodes: 1
   precision: null
-  logger:
-    class_path: lightning.pytorch.loggers.WandbLogger
-    init_args:
-      project: dnabert
-      log_model: true
-  callbacks:
-    - class_path: lightning.pytorch.callbacks.ModelCheckpoint
-      init_args:
-        monitor: train/loss
-        mode: min
-        save_weights_only: False
+  logger: null
+  callbacks: null
   fast_dev_run: false
-  max_epochs: null
+  max_epochs: 1000
   min_epochs: null
-  max_steps: 100000
+  max_steps: -1
   min_steps: null
   max_time: null
   limit_train_batches: null
@@ -31,7 +48,7 @@ trainer:
   check_val_every_n_epoch: 1
   num_sanity_val_steps: null
   log_every_n_steps: 50
-  enable_checkpointing: true
+  enable_checkpointing: null
   enable_progress_bar: null
   enable_model_summary: null
   accumulate_grad_batches: 1
@@ -40,47 +57,11 @@ trainer:
   deterministic: null
   benchmark: null
   inference_mode: true
-  use_distributed_sampler: True
+  use_distributed_sampler: true
   profiler: null
   detect_anomaly: false
   barebones: false
   plugins: null
   sync_batchnorm: false
   reload_dataloaders_every_n_epochs: 0
-  default_root_dir: "./"
-model:
-  base:
-    class_path: dnabert.DnaBertModel
-    init_args:
-      transformer_encoder:
-        class_path: dbtk.nn.layers.TransformerEncoder
-        init_args:
-          encoder_layer:
-            class_path: dbtk.nn.layers.TransformerEncoderBlock
-            init_args:
-              mha:
-                class_path: dbtk.nn.layers.RelativeMultiHeadAttention
-                init_args:
-                  embed_dim: 768
-                  num_heads: 12
-                  max_length: ${data.max_length} # kmer sequence length
-                  dropout: 0.0
-                  bias: true
-              feedforward_dim: 2048
-              feedforward_activation:
-                class_path: torch.nn.GELU
-                init_args:
-                  approximate: none
-              norm_first: true
-              dropout: 0.1
-          num_layers: 8
-      kmer: 6
-      kmer_stride: 1
-data:
-  val_split: 0.0
-  min_length: 65
-  max_length: 250
-  mask_ratio: 0.15
-  batch_size: 128
-  num_workers: 2
-ckpt_path: null
+  default_root_dir: null
