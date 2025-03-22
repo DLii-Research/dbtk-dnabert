@@ -19,5 +19,5 @@ dbtk model fit -c configs/768d.yaml ./logs/768d
 The trained model can be exported to a Huggingface model with the following command.
 
 ```bash
-dbtk model export ./logs/768d ./exports/768d
+dbtk model export ./logs/768d/last.ckpt ./exports/768d
 ```
