@@ -1,6 +1,6 @@
 [project]
 name = "dbtk-dnabert"
-version = "1.2.0"
+version = "1.2.1"
 authors = [
   { name="David W. Ludwig II", email="davidludwigii@gmail.com" }
 ]
@@ -9,7 +9,7 @@ readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.8"
 dependencies = [
-  "deepbio-toolkit >= 0.3.3",
+  "deepbio-toolkit >= 0.4.1",
   "lightning"
 ]
 
