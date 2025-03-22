@@ -100,7 +100,7 @@ class DnaBertForPretraining(DbtkModel):
         is_composition = True
         def __init__(
             self,
-            base: Optional[Union[DnaBert.Config, dict]] = None,
+            base: Optional[Union[DnaBert, DnaBert.Config, dict]] = None,
             min_mask_ratio: float = 0.15,
             max_mask_ratio: float = 0.15,
             **kwargs
@@ -111,19 +111,12 @@ class DnaBertForPretraining(DbtkModel):
             self.max_mask_ratio = max_mask_ratio
 
     config_class = Config
-    datamodule_class = DnaBertPretrainingDataModule
 
     def __init__(self, config: Optional[Union[Config, dict]] = None):
         super().__init__(config)
 
         # Setup base model
-        if isinstance(self.config.base, DnaBert):
-            self.base = self.config.base
-        elif isinstance(self.config.base, (str, Path)):
-            self.base = DnaBert.from_pretrained(self.config.base)
-        else:
-            self.base = DnaBert(self.config.base)
-        self.config.base = self.base.config
+        self.base = self.instantiate_model("base", DnaBert)
         self.mask_head = nn.Linear(self.base.config.embed_dim, self.base.tokenizer.num_token_ids)
 
     def _apply_random_masking(self, kmers: torch.Tensor, inplace: bool = False):
