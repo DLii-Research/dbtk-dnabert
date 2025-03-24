@@ -42,7 +42,9 @@ class DnaTokenizer:
         identifiers = {
             "[PAD]": 0,
             "[UNK]": 1,
-            "[MASK]": 2
+            "[CLS]": 2,
+            "[SEP]": 3,
+            "[MASK]": 4
         }
         for kmer in product("ACGT", repeat=self.kmer):
             token = "".join(kmer)
