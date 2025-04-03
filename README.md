@@ -11,7 +11,11 @@ Template model configurations can be generated using the `dbtk model config` com
 The model can be pre-trained using the supplied configurations with the command:
 
 ```bash
-dbtk model fit -c configs/768d.yaml ./logs/768d
+dbtk model fit \
+    -c ./configs/datamodules/pretrain_silva_16s_250bp.yaml \
+    -c ./configs/models/pretrain_dnabert_768d_250bp.yaml \
+    -c ./configs/trainers/pretrainer.yaml \
+    ./logs/dnabert_768d_250bp
 ```
 
 ## Exporting
@@ -19,5 +23,5 @@ dbtk model fit -c configs/768d.yaml ./logs/768d
 The trained model can be exported to a Huggingface model with the following command.
 
 ```bash
-dbtk model export ./logs/768d/last.ckpt ./exports/768d
+dbtk model export ./logs/dnabert_768d_250bp/last.ckpt ./exports/dnabert_768d_250bp
 ```

@@ -3,11 +3,12 @@ from dbtk.nn.models import DbtkModel
 from dbtk.nn import layers
 from deprecated import deprecated
 import lightning as L
+from pathlib import Path
 from transformers import PretrainedConfig
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Type, Union
 
 from .datamodules import DnaBertPretrainingDataModule
 from .tokenizers import DnaTokenizer
@@ -17,15 +18,15 @@ class DnaBert(DbtkModel):
     class Config(PretrainedConfig):
         def __init__(
             self,
-            kmer=3,
+            kmer=6,
             kmer_stride=1,
             normalize_sequences=True,
-            embed_dim: int = 64,
-            num_heads: int = 8,
-            num_layers: int = 8,
-            feedforward_dim: int = 256,
+            embed_dim: int = 768,
+            num_heads: int = 12,
+            num_layers: int = 6,
+            feedforward_dim: int = 2048,
             activation: str = "gelu",
-            max_length: int = 1024,
+            max_length: int = 250,
             **kwargs
         ):
             super().__init__(**kwargs)
@@ -87,7 +88,7 @@ class DnaBert(DbtkModel):
 
         # Separate embeddings
         transformed_class_tokens = output[:, 0]
-        transformed_kmers = output[:, 1:-1]
+        transformed_kmers = output[:, 1:]
 
         return {
             "class": transformed_class_tokens,
@@ -100,24 +101,28 @@ class DnaBertForPretraining(DbtkModel):
         is_composition = True
         def __init__(
             self,
-            base: Optional[Union[DnaBert, DnaBert.Config, dict]] = None,
+            base: Optional[Union[str, Path, DnaBert.Config, DnaBert]] = None,
+            base_class: Optional[Union[str, Type[DnaBert]]] = "dnabert.models.DnaBert",
             min_mask_ratio: float = 0.15,
             max_mask_ratio: float = 0.15,
             **kwargs
         ):
             super().__init__(**kwargs)
-            self.base = base if base is not None else DnaBert.Config()
+            self.base = base
+            self.base_class = base_class
             self.min_mask_ratio = min_mask_ratio
             self.max_mask_ratio = max_mask_ratio
 
     config_class = Config
     base_model_prefix = "base"
+    sub_models = ["base"]
+
+    base: DnaBert
 
     def __init__(self, config: Optional[Union[Config, dict]] = None):
         super().__init__(config)
 
         # Setup base model
-        self.base = self.instantiate_model("base", DnaBert)
         self.mask_head = nn.Linear(self.base.config.embed_dim, self.base.tokenizer.num_token_ids)
 
     def _apply_random_masking(self, kmers: torch.Tensor, inplace: bool = False):

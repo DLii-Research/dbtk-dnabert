@@ -1,0 +1,15 @@
+model:
+  class_path: dnabert.models.DnaBertForPretraining
+  config:
+    base:
+      max_length: 250
+      kmer: 3
+      kmer_stride: 1
+      normalize_sequences: true
+      embed_dim: 768
+      num_heads: 12
+      num_layers: 6
+      feedforward_dim: 2048
+      activation: gelu
+    min_mask_ratio: 0.15
+    max_mask_ratio: 0.15

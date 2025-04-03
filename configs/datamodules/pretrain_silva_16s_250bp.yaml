@@ -1,0 +1,12 @@
+datamodule:
+  class_path: dnabert.datamodules.DnaBertPretrainingDataModule
+  config:
+    tokenizer: ${model.base.tokenizer}
+    train_sequences_path: ${env:DATASETS_DIR}/silva_nr99_filtered_515f_806r/sequences.fasta.db
+    test_sequences_path: null
+    val_split: 0.0
+    min_length: 65
+    max_length: 250
+    reverse_complement: true
+    batch_size: 64
+    num_workers: 0

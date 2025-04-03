@@ -1,30 +1,3 @@
-model:
-  class_path: dnabert.models.DnaBertForPretraining
-  config:
-    base:
-      max_length: 250
-      kmer: 3
-      kmer_stride: 1
-      normalize_sequences: true
-      embed_dim: 768
-      num_heads: 12
-      num_layers: 6
-      feedforward_dim: 2048
-      activation: gelu
-    min_mask_ratio: 0.15
-    max_mask_ratio: 0.15
-datamodule:
-  class_path: dnabert.datamodules.DnaBertPretrainingDataModule
-  config:
-    tokenizer: ${model.base.tokenizer}
-    train_sequences_path: /home/data2/deepdna/datasets/silva_nr99_filtered_515f_806r/sequences.fasta.db
-    test_sequences_path: null
-    val_split: 0.0
-    min_length: 65
-    max_length: 250
-    reverse_complement: true
-    batch_size: 128
-    num_workers: 0
 train:
   accelerator: auto
   strategy: auto
@@ -34,9 +7,9 @@ train:
   logger: null
   callbacks: null
   fast_dev_run: false
-  max_epochs: 1000
+  max_epochs: -1
   min_epochs: null
-  max_steps: -1
+  max_steps: 150000
   min_steps: null
   max_time: null
   limit_train_batches: null
