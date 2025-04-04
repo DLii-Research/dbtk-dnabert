@@ -44,8 +44,8 @@ embeddings = output["tokens"].mean(dim=1)
 
 | Model Name | Embedding Dim. | Maximum Length | Pre-training Dataset |
 | --- | --- | --- | --- |
-| 64d-silva16s-250bp | 64 | 250bp | Silva 16S |
-| 768d-silva16s-250bp | 768 | 250bp | Silva 16S |
+| `64d-silva16s-250bp` | 64 | 250bp | Silva 16S |
+| `768d-silva16s-250bp` | 768 | 250bp | Silva 16S |
 
 ## Development
 
