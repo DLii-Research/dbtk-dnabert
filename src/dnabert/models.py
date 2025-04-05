@@ -189,3 +189,11 @@ class DnaBertForEmbedding(DbtkModel):
     @property
     def tokenizer(self):
         return self.base.tokenizer
+
+    @classmethod
+    def from_pretrained(cls, *args, **kwargs):
+        base = DnaBert.from_pretrained(*args, **kwargs)
+        return cls(cls.Config(base=base))
+
+    def save_pretrained(self, *args, **kwargs):
+        return self.base.save_pretrained(*args, **kwargs)
