@@ -1,6 +1,6 @@
 [project]
 name = "dbtk-dnabert"
-version = "1.2.2"
+version = "1.2.3"
 authors = [
   { name="David W. Ludwig II", email="davidludwigii@gmail.com" }
 ]
