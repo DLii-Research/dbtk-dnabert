@@ -17,18 +17,29 @@ class DnaBert(DbtkModel):
     class Config(PretrainedConfig):
         model_type = "dnabert"
 
-        # Model configuration
-        kmer: int = 6
-        kmer_stride: int = 1
-        normalize_sequences: bool = True
-
-        # Transformer configuration
-        embed_dim: int = 768
-        num_heads: int = 12
-        num_layers: int = 6
-        feedforward_dim: int = 2048
-        activation: str = "gelu"
-        max_length: int = 250
+        def __init__(
+            self,
+            kmer: int = 6,
+            kmer_stride: int = 1,
+            normalize_sequences: bool = True,
+            embed_dim: int = 768,
+            num_heads: int = 12,
+            num_layers: int = 6,
+            feedforward_dim: int = 2048,
+            activation: str = "gelu",
+            max_length: int = 250,
+            **kwargs
+        ):
+            super().__init__(**kwargs)
+            self.kmer = kmer
+            self.kmer_stride = kmer_stride
+            self.normalize_sequences = normalize_sequences
+            self.embed_dim = embed_dim
+            self.num_heads = num_heads
+            self.num_layers = num_layers
+            self.feedforward_dim = feedforward_dim
+            self.activation = activation
+            self.max_length = max_length
 
     config_class = Config
 
@@ -90,13 +101,21 @@ class DnaBertForPretraining(DbtkModel):
     class Config(PretrainedConfig):
         # Enable nesting
         is_composition = True
-        model_type = "dnabert"
+        model_type = "dnabert_for_pretraining"
 
-        # Model configuration
-        base: Optional[BaseModelType[DnaBert]] = None
-        base_class: Optional[BaseModelClassType[DnaBert]] = "dnabert.models.DnaBert"
-        min_mask_ratio: float = 0.15
-        max_mask_ratio: float = 0.15
+        def __init__(
+            self,
+            base: Optional[BaseModelType[DnaBert]] = None,
+            base_class: Optional[BaseModelClassType[DnaBert]] = "dnabert.models.DnaBert",
+            min_mask_ratio: float = 0.15,
+            max_mask_ratio: float = 0.15,
+            **kwargs
+        ):
+            super().__init__(**kwargs)
+            self.base = base
+            self.base_class = base_class
+            self.min_mask_ratio = min_mask_ratio
+            self.max_mask_ratio = max_mask_ratio
 
     config_class = Config
     base_model_prefix = "base"
